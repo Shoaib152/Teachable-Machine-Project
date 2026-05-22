@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import requests
 import os
 from PIL import Image
@@ -361,6 +362,9 @@ with col_testing:
         
         test_method = st.radio("Inference Input Source:", ["Webcam Stream", "Image Uploader"], key="test_method")
         
+        # Audio voice feedback toggle
+        voice_feedback = st.checkbox("🔊 Voice Feedback (Read Out Loud)", value=True, key="voice_feedback")
+        
         test_image_bytes = None
         if test_method == "Image Uploader":
             test_file = st.file_uploader("Upload an image for immediate classification:", type=["jpg", "jpeg", "png", "webp"])
@@ -414,6 +418,18 @@ with col_testing:
                                 </div>
                             </div>
                             """, unsafe_allow_html=True)
+                            
+                            # Speak out loud if option enabled
+                            if voice_feedback:
+                                tts_phrase = f"It is a {predicted_class}"
+                                components.html(f"""
+                                <script>
+                                    if ('speechSynthesis' in window) {{
+                                        var msg = new SpeechSynthesisUtterance("{tts_phrase}");
+                                        window.speechSynthesis.speak(msg);
+                                    }}
+                                </script>
+                                """, height=0)
                             
                             # Render highly polished horizontal bar chart of probabilities
                             y_labels = list(predictions.keys())
