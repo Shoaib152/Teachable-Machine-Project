@@ -234,6 +234,21 @@ with col_classes:
             captured_image = st.camera_input(f"Capture image for {class_name}", key=f"webcam_{class_name}")
             if captured_image:
                 uploaded_files = [captured_image.getvalue()]
+            else:
+                with st.expander("📷 Camera not opening? Troubleshooting Guide"):
+                    st.markdown("""
+                    **1. Check Your Web Address (Secure Context)**
+                    Browsers only allow camera access on **Secure Contexts**.
+                    * **Correct:** Use **[http://localhost:8501](http://localhost:8501)** or **[http://127.0.0.1:8501](http://127.0.0.1:8501)**.
+                    * **Incorrect:** Your network IP (e.g. `http://192.168.x.x:8501`) unless served over HTTPS.
+                    
+                    **2. Check Browser Site Permissions**
+                    * Click the **Lock icon 🔒** in your browser address bar (left side of the URL).
+                    * Make sure **Camera** is set to **Allow**.
+                    
+                    **3. Check for Device Conflict**
+                    * Close other apps currently using your webcam (Zoom, Teams, or other browser tabs).
+                    """)
 
         # Show current samples on the server for this class
         distribution = st.session_state.system_status.get("sample_distribution", {})
@@ -356,6 +371,21 @@ with col_testing:
             captured_test = st.camera_input("Capture instant test image", key="test_webcam_input")
             if captured_test:
                 test_image_bytes = captured_test.getvalue()
+            else:
+                with st.expander("📷 Camera not opening? Troubleshooting Guide"):
+                    st.markdown("""
+                    **1. Check Your Web Address (Secure Context)**
+                    Browsers only allow camera access on **Secure Contexts**.
+                    * **Correct:** Use **[http://localhost:8501](http://localhost:8501)** or **[http://127.0.0.1:8501](http://127.0.0.1:8501)**.
+                    * **Incorrect:** Your network IP (e.g. `http://192.168.x.x:8501`) unless served over HTTPS.
+                    
+                    **2. Check Browser Site Permissions**
+                    * Click the **Lock icon 🔒** in your browser address bar (left side of the URL).
+                    * Make sure **Camera** is set to **Allow**.
+                    
+                    **3. Check for Device Conflict**
+                    * Close other apps currently using your webcam (Zoom, Teams, or other browser tabs).
+                    """)
 
         # Run Prediction If Image Available
         if test_image_bytes:
