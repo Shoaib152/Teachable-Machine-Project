@@ -404,7 +404,16 @@ with col_testing:
                             confidence = pred_data.get("confidence")
                             predictions = pred_data.get("predictions", {})
                             
-                            st.markdown(f"**Predicted Category:** <span style='font-size: 1.4rem;' class='glow-text-cyan'>{predicted_class}</span> (Probability: `{confidence:.2%}`)", unsafe_allow_html=True)
+                            # Premium styled Box displaying Predicted Category and Confidence Score
+                            st.markdown(f"""
+                            <div style="background: rgba(0, 229, 255, 0.08); border: 2px solid #00e5ff; padding: 18px; border-radius: 12px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 20px rgba(0, 229, 255, 0.15);">
+                                <span style="font-size: 0.95rem; color: #a0aabf; text-transform: uppercase; letter-spacing: 1px;">Top Prediction</span>
+                                <h3 style="margin: 5px 0; color: #00e5ff; font-size: 2rem; font-family: 'Space Grotesk', sans-serif;">{predicted_class}</h3>
+                                <div style="font-size: 1.25rem; font-weight: bold; color: #e5e9f0;">
+                                    Confidence: <span class="glow-text-cyan">{confidence:.2%}</span>
+                                </div>
+                            </div>
+                            """, unsafe_allow_html=True)
                             
                             # Render highly polished horizontal bar chart of probabilities
                             y_labels = list(predictions.keys())
