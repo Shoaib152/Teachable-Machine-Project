@@ -301,34 +301,46 @@ with col_training:
     
     # Dynamic list of classes on the backend
     distribution = st.session_state.system_status.get("sample_distribution", {})
+    classes_with_data = len(distribution)
     
     st.write("**Dataset Diagnostics:**")
     if distribution:
         for c, count in distribution.items():
-            st.text(f"• {c}: {count} samples")
+            status_icon = "✅" if count > 0 else "❌"
+            st.text(f"{status_icon} {c}: {count} samples")
     else:
         st.info("No training samples uploaded yet.")
+
+    # Pre-flight readiness check
+    if classes_with_data < 2:
+        missing = 2 - classes_with_data
+        st.warning(f"⚠️ **Not ready to train!** You need images in at least **2 classes**. Currently: **{classes_with_data}** class(es) have data. Upload samples to **{missing} more** class(es) on the left panel first.")
+    else:
+        st.success(f"✅ Ready! **{classes_with_data} classes** with data detected.")
 
     st.markdown("<br>", unsafe_allow_html=True)
     
     if st.button("🚀 Train Model", use_container_width=True):
-        with st.spinner("Extracting Deep Features & Training Classifier..."):
-            try:
-                res = requests.post(f"{BACKEND_URL}/train", timeout=60)
-                if res.status_code == 200:
-                    train_data = res.json()
-                    if train_data.get("status") == "success":
-                        st.success(train_data.get("message"))
-                        st.balloons()
-                        query_backend_status()
-                        st.rerun()
+        # Client-side guard before calling backend
+        if classes_with_data < 2:
+            st.error(f"🚫 Cannot train with only {classes_with_data} class(es). Go to the left panel and upload images to at least **2 different classes** before training.")
+        else:
+            with st.spinner("Extracting Deep Features & Training Classifier..."):
+                try:
+                    res = requests.post(f"{BACKEND_URL}/train", timeout=60)
+                    if res.status_code == 200:
+                        train_data = res.json()
+                        if train_data.get("status") == "success":
+                            st.success(train_data.get("message"))
+                            st.balloons()
+                            query_backend_status()
+                            st.rerun()
+                        else:
+                            st.error(f"⚠️ Training Blocked:\n\n{train_data.get('message')}")
                     else:
-                        # Graceful error display from API validation
-                        st.error(f"⚠️ Training Blocked:\n\n{train_data.get('message')}")
-                else:
-                    st.error(f"Backend returned HTTP {res.status_code}: {res.text}")
-            except Exception as e:
-                st.error(f"Failed to reach FastAPI backend: {e}")
+                        st.error(f"Backend returned HTTP {res.status_code}: {res.text}")
+                except Exception as e:
+                    st.error(f"Failed to reach FastAPI backend: {e}")
 
     # Display Trained status card
     if st.session_state.trained:
