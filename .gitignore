@@ -1,0 +1,28 @@
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# IDE Configurations
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local Dataset & Checkpoints
+backend/dataset/
+backend/models/model.pkl
+
+# Streamlit Local Cache
+.streamlit/
